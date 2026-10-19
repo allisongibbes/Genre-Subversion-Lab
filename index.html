@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genre Subversion Lab Widget</title>
+    <style>
+        .widget-wrapper {
+            background-color: #22272e;
+            color: #ffffff;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            padding: 24px;
+            border-radius: 8px;
+            max-width: 900px;
+            margin: 0 auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .widget-header {
+            background-color: #1c8a24;
+            color: #000000;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #1c8a24;
+        }
+        .widget-header h2 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+        .widget-header p {
+            margin: 8px 0 0 0;
+            color: #111111;
+            font-size: 15px;
+            font-weight: 600;
+        }
+        .scoreboard {
+            display: flex;
+            justify-content: space-between;
+            background-color: #2d333b;
+            padding: 12px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-left: 5px solid #1c8a24;
+        }
+        .lab-card {
+            background-color: #2d333b;
+            border: 1px solid #444c56;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .lab-card h3 {
+            margin-top: 0;
+            color: #1c8a24;
+            font-size: 20px;
+            border-bottom: 1px solid #444c56;
+            padding-bottom: 8px;
+        }
+        .scenario-text {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        .option-btn {
+            background-color: #373e47;
+            color: #ffffff;
+            border: 1px solid #444c56;
+            padding: 12px 16px;
+            border-radius: 6px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .option-btn:hover:not(:disabled) {
+            background-color: #444c56;
+            border-color: #1c8a24;
+        }
+        .option-btn:disabled {
+            cursor: default;
+        }
+        .option-btn.correct {
+            background-color: rgba(28, 138, 36, 0.3);
+            border-color: #1c8a24;
+            color: #55ff66;
+            font-weight: bold;
+        }
+        .option-btn.incorrect {
+            background-color: rgba(255, 107, 107, 0.2);
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+        .explanation-box {
+            margin-top: 14px;
+            padding: 12px;
+            background-color: #22272e;
+            border-left: 4px solid #1c8a24;
+            border-radius: 4px;
+            font-size: 14px;
+            line-height: 1.4;
+            display: none;
+        }
+        .nav-controls {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 16px;
+        }
+        .next-btn, .reset-btn {
+            background-color: #1c8a24;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: none;
+        }
+        .next-btn:hover, .reset-btn:hover {
+            background-color: #156d1d;
+        }
+        .completion-screen {
+            text-align: center;
+            padding: 30px;
+            display: none;
+        }
+        .completion-screen h3 {
+            color: #1c8a24;
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="widget-wrapper">
+    <div class="widget-header">
+        <h2>🔬 Genre Subversion Lab</h2>
+        <p>Analyze narrative choices and identify how filmmakers twist, bend, and subvert traditional genre conventions!</p>
+    </div>
+
+    <div class="scoreboard">
+        <div>Challenge: <span id="current-step">1</span> / 4</div>
+        <div>Score: <span id="lab-score">0</span> / 4</div>
+    </div>
+
+    <div id="quiz-container">
+        <div class="lab-card">
+            <h3 id="scenario-title">Scenario 1: The Daytime Terror</h3>
+            <p class="scenario-text" id="scenario-desc">A horror film traditionally relies on dark, shadowy basements, midnight storms, and gloomy night settings to create suspense and fear. However, a filmmaker decides to set the most gruesome, terrifying rituals of the cult in bright, sunlit meadows during a cheerful midsummer festival.</p>
+            <p style="font-weight: bold; color: #1c8a24; margin-bottom: 12px;">What technique of genre manipulation is being demonstrated here?</p>
+            
+            <div class="options-grid" id="options-container">
+                <button class="option-btn" data-correct="false" data-expl="A spoof exaggerates conventions for broad comedy, which doesn't fit a serious horror setting.">A) A Spoof: Exaggerating tropes solely for comedic parody.</button>
+                <button class="option-btn" data-correct="true" data-expl="Correct! This is a Subversion. By removing the safety of daylight and placing horror in broad daylight, the filmmaker upends traditional genre expectations.">B) A Subversion: Using the exact opposite of expected genre atmosphere to create unique unease.</button>
+                <button class="option-btn" data-correct="false" data-expl="A genre switch mid-story changes categories entirely (like crime turning into fantasy), whereas this maintains a unified horror tone.">C) A Genre Switch: Shifting from crime drama into creature features midway through.</button>
+                <button class="option-btn" data-correct="false" data-expl="A hybrid genre blends two distinct categories from start to finish.">D) A Hybrid Genre: Combining western tropes with sci-fi elements simultaneously.</button>
+            </div>
+
+            <div class="explanation-box" id="explanation-box"></div>
+            
+            <div class="nav-controls">
+                <button class="next-btn" id="next-btn">Next Scenario &rarr;</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="completion-screen" id="completion-screen">
+        <h3>🎉 Lab Experiment Complete!</h3>
+        <p id="final-score-text" style="font-size: 18px; margin-bottom: 20px;"></p>
+        <button class="reset-btn" id="reset-lab" style="display: inline-block;">Restart Lab</button>
+    </div>
+</div>
+
+<script>
+    const scenarios = [
+        {
+            title: "Scenario 1: The Daytime Terror",
+            desc: "A horror film traditionally relies on dark, shadowy basements, midnight storms, and gloomy night settings to create suspense and fear. However, a filmmaker decides to set the most gruesome, terrifying rituals of the cult in bright, sunlit meadows during a cheerful midsummer festival.",
+            options: [
+                { text: "A) A Spoof: Exaggerating tropes solely for comedic parody.", correct: false, expl: "A spoof exaggerates conventions for broad comedy, which doesn't fit a serious horror setting." },
+                { text: "B) A Subversion: Using the exact opposite of expected genre atmosphere to create unique unease.", correct: true, expl: "Correct! This is a Subversion. By removing the safety of daylight and placing horror in broad daylight, the filmmaker upends traditional genre expectations." },
+                { text: "C) A Genre Switch: Shifting from crime drama into creature features midway through.", correct: false, expl: "A genre switch mid-story changes categories entirely, whereas this maintains a unified horror tone." },
+                { text: "D) A Hybrid Genre: Combining western tropes with sci-fi elements simultaneously.", correct: false, expl: "A hybrid genre blends two distinct categories from start to finish." }
+            ]
+        },
+        {
+            title: "Scenario 2: The Mid-Film Shift",
+            desc: "A gritty crime thriller starts with hardened criminals planning an illegal heist and kidnapping a hostage, keeping strictly grounded in realistic crime tropes. Exactly halfway through, the characters walk into an isolated desert bar that turns out to be entirely infested with bloodthirsty vampires.",
+            options: [
+                { text: "A) A Spoof: Making fun of cliché criminal behavior.", correct: false, expl: "The shift into vampires is treated with full genre seriousness, not comedic parody." },
+                { text: "B) A Subversion: Simply tweaking the costume design of the criminals.", correct: false, expl: "Costume changes do not account for a complete narrative category shift." },
+                { text: "C) A Genre Switch: Beginning firmly in one genre category before making a complete, unexpected transformation into another.", correct: true, expl: "Correct! This is a Genre Switch. The narrative completely abandons crime realism to plunge characters directly into supernatural horror." },
+                { text: "D) A Pure Western: Focusing entirely on desert landscapes and outlaws.", correct: false, expl: "Vampires and heists have nothing to do with traditional Western frontier conventions." }
+            ]
+        },
+        {
+            title: "Scenario 3: The Exaggerated Parody",
+            desc: "A comedic film focuses on clumsy secret agents equipped with ridiculous gadgets, heavily mocking and amplifying the absurd clichés, dramatic slow-motion walks, and villainous monologues found in classic spy thrillers.",
+            options: [
+                { text: "A) A Spoof: A work of humorous fiction that takes specific genre conventions and exaggerates them for comic effect.", correct: true, expl: "Correct! This is a Spoof. It relies entirely on audience familiarity with spy tropes to generate laughs through exaggeration." },
+                { text: "B) A Documentary: Capturing authentic real-world intelligence agency operations.", correct: false, expl: "Secret agents and ridiculous gadgets in this context are purely comedic fiction." },
+                { text: "C) A Pure Drama: Focusing on heavy emotional trauma and gritty realism.", correct: false, expl: "Parodying tropes for laughs is the exact opposite of a serious dramatic tone." },
+                { text: "D) A Silent Film: Relying solely on title cards and instrumental background piano.", correct: false, expl: "Modern comedic parodies utilize full dialogue and contemporary cinematic audio." }
+            ]
+        },
+        {
+            title: "Scenario 4: The Dual Blend",
+            desc: "A futuristic story follows a hard-boiled detective wearing a trench coat, investigating shady underworld crimes amidst neon-lit, rain-slicked city streets, while tracking synthetic human androids in a sprawling sci-fi metropolis.",
+            options: [
+                { text: "A) A Pure Romantic Comedy: Focusing entirely on finding love in a small town.", correct: false, expl: "Neon-lit dystopian crime investigation bears no resemblance to rom-coms." },
+                { text: "B) A Hybrid Genre: Blending formal conventions and aesthetics from two distinct genres (Film Noir and Sci-Fi) from beginning to end.", correct: true, expl: "Correct! This is a Hybrid Genre. It merges the mood, cynicism, and aesthetics of 1940s film noir with futuristic science fiction elements seamlessly." },
+                { text: "C) A Historical Western: Sticking strictly to 19th-century frontier towns.", correct: false, expl: "Futuristic synthetic androids and neon cities belong to sci-fi, not the 19th-century frontier." },
+                { text: "D) A Wildlife Documentary: Studying animal migrations in nature preserves.", correct: false, expl: "Detectives and androids are fictional narrative elements, not non-fiction animal studies." }
+            ]
+        }
+    ];
+
+    let currentStep = 0;
+    let score = 0;
+    let answered = false;
+
+    const currentStepEl = document.getElementById('current-step');
+    const labScoreEl = document.getElementById('lab-score');
+    const scenarioTitle = document.getElementById('scenario-title');
+    const scenarioDesc = document.getElementById('scenario-desc');
+    const optionsContainer = document.getElementById('options-container');
+    const explanationBox = document.getElementById('explanation-box');
+    const nextBtn = document.getElementById('next-btn');
+    const quizContainer = document.getElementById('quiz-container');
+    const completionScreen = document.getElementById('completion-screen');
+    const finalScoreText = document.getElementById('final-score-text');
+    const resetLabBtn = document.getElementById('reset-lab');
+
+    function loadScenario() {
+        const data = scenarios[currentStep];
+        currentStepEl.textContent = currentStep + 1;
+        scenarioTitle.textContent = data.title;
+        scenarioDesc.textContent = data.desc;
+        explanationBox.style.display = 'none';
+        nextBtn.style.display = 'none';
+        answered = false;
+
+        optionsContainer.innerHTML = '';
+        data.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.textContent = opt.text;
+            btn.dataset.correct = opt.correct;
+            btn.dataset.expl = opt.expl;
+
+            btn.addEventListener('click', () => {
+                if (answered) return;
+                answered = true;
+
+                const allBtns = optionsContainer.querySelectorAll('.option-btn');
+                allBtns.forEach(b => {
+                    b.disabled = true;
+                    if (b.dataset.correct === 'true') {
+                        b.classList.add('correct');
+                    }
+                });
+
+                if (opt.correct === 'true') {
+                    score++;
+                    labScoreEl.textContent = score;
+                    btn.classList.add('correct');
+                } else {
+                    btn.classList.add('incorrect');
+                }
+
+                explanationBox.textContent = opt.expl;
+                explanationBox.style.display = 'block';
+
+                if (currentStep < scenarios.length - 1) {
+                    nextBtn.textContent = "Next Scenario \u2192";
+                    nextBtn.style.display = 'inline-block';
+                } else {
+                    nextBtn.textContent = "View Results";
+                    nextBtn.style.display = 'inline-block';
+                }
+            });
+
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    nextBtn.addEventListener('click', () => {
+        currentStep++;
+        if (currentStep < scenarios.length) {
+            loadScenario();
+        } else {
+            quizContainer.style.display = 'none';
+            completionScreen.style.display = 'block';
+            finalScoreText.textContent = `You successfully analyzed ${score} out of 4 genre subversion scenarios correctly!`;
+        }
+    });
+
+    resetLabBtn.addEventListener('click', () => {
+        currentStep = 0;
+        score = 0;
+        labScoreEl.textContent = score;
+        completionScreen.style.display = 'none';
+        quizContainer.style.display = 'block';
+        loadScenario();
+    });
+
+    loadScenario();
+</script>
+
+</body>
+</html>
